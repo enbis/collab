@@ -3,7 +3,7 @@ import os
 import PyPDF2
 import textract
 import tabula
-import pandas as pd
+import xlrd
 import numpy as np
 from matplotlib import pyplot as plt
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -22,23 +22,46 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write("received post request:<br>{}".format(post_body))
 
 
+def process_row0(firstrow):
+    outcome_end_index = len(firstrow) - 1
+    for i, cell in enumerate(firstrow, start=0):
+        if i == 0 or cell.ctype == 0:
+            continue
+        if cell.ctype == 1 and cell.value.lower() == "income":
+            income_start_index = i
+        if cell.ctype == 1 and cell.value.lower() == "outcome":
+            income_end_index = i-1
+            outcome_start_index = i         
+         
+    print("Income_Start {}, Income_End {}, Outcome_Start {}, Outcome_End {}".format(income_start_index, income_end_index, outcome_start_index, outcome_end_index))
+    return (income_start_index, income_end_index, outcome_start_index, outcome_end_index)
+
+def process_row(row):
+    res = np.array([])
+    for i, cell in enumerate(row, start=0):
+        if cell.ctype == 1 and i != 0:
+            res = np.append(res, cell.value)
+    return res
+
 def test_pyprocsal():
-    files = os.listdir('local/')
-    first = 'John\n'
-    last = 'Doe'
-    street = 'Main Street'
-    number = 123
-    city = 'AnyCity'
-    state = 'AS'
-    zipcode = '09876'
-    print (("{0} {1}\n{2} {3}\n{4}, {5} {6}").format(first, last, number, street, city, state, zipcode))
     
-    data = pd.read_excel('local/input.xlsx', sheet_name='Test', usecols=['Salary', 'Month'])
-    print(data)
-    x = np.array(data.Salary)
-    print(x[0])
-    plt.plot(x)
-    plt.show()
+    ##data = pd.read_excel('local/input.xlsx', sheet_name='Test', names=['Income', 'Outcome'])
+    excel_sheet = xlrd.open_workbook("local/input.xlsx")
+    sheet = excel_sheet.sheet_by_index(0)
+    #print("{0} {1} {2}".format(data.merged_cells, data.nrows, data.ncols))
+    
+    indexes = process_row0(sheet.row(0))
+
+    headers = process_row(sheet.row(1)))
+
+    nr = sheet.nrows
+    
+    # for cx in range(data.ncols):
+    #     print(data.col(cx))
+    ##x = np.array(data.Salary)
+    ##print(x[0])
+    ##plt.plot(x)
+    ##plt.show()
 
     
     # for f in files:
