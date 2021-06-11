@@ -39,7 +39,15 @@ def process_row0(firstrow):
 def process_row(row):
     res = np.array([])
     for i, cell in enumerate(row, start=0):
-        if cell.ctype == 1 and i != 0:
+        if cell.ctype == 1 and i!=0:
+            res = np.append(res, cell.value)
+    return res
+
+#need to process the indexes
+def process_col(col):
+    res = np.array([])
+    for i, cell in enumerate(col, start=0):
+        if cell.ctype == 1 and i>1:
             res = np.append(res, cell.value)
     return res
 
@@ -52,7 +60,11 @@ def test_pyprocsal():
     
     indexes = process_row0(sheet.row(0))
 
-    headers = process_row(sheet.row(1)))
+    headers = process_row(sheet.row(1))
+    print(headers)
+
+    months = process_col(sheet.col(0)) 
+    print(months)
 
     nr = sheet.nrows
     
