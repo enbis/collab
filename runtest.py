@@ -1,10 +1,7 @@
 import sys
 import os
-import PyPDF2
-import textract
-import tabula
-import xlrd
 import numpy as np
+import openpyxl
 from matplotlib import pyplot as plt
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
@@ -53,20 +50,19 @@ def process_col(col):
 
 def test_pyprocsal():
     
-    ##data = pd.read_excel('local/input.xlsx', sheet_name='Test', names=['Income', 'Outcome'])
-    excel_sheet = xlrd.open_workbook("local/input.xlsx")
-    sheet = excel_sheet.sheet_by_index(0)
-    #print("{0} {1} {2}".format(data.merged_cells, data.nrows, data.ncols))
-    
-    indexes = process_row0(sheet.row(0))
+    excel_sheet = openpyxl.load_workbook("local/input.xlsx")
+    #starting from the first sheet
+    zero_sheet = excel_sheet.sheetnames[0]
 
-    headers = process_row(sheet.row(1))
-    print(headers)
+    print(zero_sheet[1])
 
-    months = process_col(sheet.col(0)) 
-    print(months)
+    # headers = process_row(sheet.row(1))
+    # print(headers)
 
-    nr = sheet.nrows
+    # months = process_col(sheet.col(0)) 
+    # print(months)
+
+    # nr = sheet.nrows
     
     # for cx in range(data.ncols):
     #     print(data.col(cx))
