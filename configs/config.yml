@@ -1,0 +1,5 @@
+webserver:
+  host: localhost
+  port: 9070
+log:
+  level: logging.INFO
